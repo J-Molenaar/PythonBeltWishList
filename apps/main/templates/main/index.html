@@ -1,0 +1,67 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    {%load static%}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <title>Wish List</title>
+  </head>
+  <body>
+    <div class="wrapper">
+        <div class="navigation">
+            <a href="{% url 'main:items' %}">Add Item</a> <a href="/logout">Logout</a>
+        </div>
+        <h1>Welcome {{request.session.user_name}}!</h1>
+        <h2>Your Wish List:</h2>
+        <table>
+          <thead>
+            <th>Item</th>
+            <th>Added By</th>
+            <th>Date Added</th>
+            <th>Action</th>
+          </thead>
+          <tbody>
+          {%for item in user_items%}
+            <tr>
+              <td><a href="{% url 'main:details' id=item.id%}">{{item.item}}</a></td>
+              <td>{{item.created_by.name}}</td>
+              <td>{{item.created_at}}</td>
+            {%if item.created_by.name == request.session.user_name%}
+                <td><a href="{% url 'main:delete' id=item.id %}" method="post">Delete</a></td>
+            </tr>
+            {%else%}
+              <td><a href="{% url 'main:remove' id=item.id %}">Remove</a></td>
+            </tr>
+            {%endif%}
+          {%endfor%}
+          </tbody>
+        </table>
+        <h2>What's on Other Users' Wish Lists:</h2>
+        <table>
+          <thead>
+            <th>Item</th>
+            <th>Added By</th>
+            <th>Date Added</th>
+            <th>Action</th>
+          </thead>
+          <tbody>
+          {%for item in other_user_items%}
+            <tr>
+                <td><a href="{% url 'main:details' id=item.id%}">{{item.item}}</a></td>
+                <td>{{item.created_by.name}}</td>
+                <td>{{item.created_at}}</td>
+                {%if item.created_by.name == request.session.user_name%}
+                    <td><a href="{% url 'main:delete' id=item.id %}" method="post">Delete</a></td>
+                </tr>
+                {%else%}
+                <td><a href="{% url 'main:join' id=item.id %}">Add to List</a></td>
+            </tr>
+            {%endif%}
+          {%endfor%}
+          </tbody>
+        </table>
+    </div>
+  </body>
+</html>
